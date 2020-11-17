@@ -620,6 +620,7 @@ instance Arbitrary ProtocolParameters where
         <*> choose (0, 100)
         <*> arbitrary
         <*> arbitrary
+        <*> arbitrary
 
 instance Arbitrary TxParameters where
     shrink = genericShrink
@@ -631,7 +632,6 @@ instance Arbitrary FeePolicy where
     arbitrary = LinearFee
         <$> fmap Quantity (choose (0, 1000))
         <*> fmap Quantity (choose (0, 100))
-        <*> pure (Quantity 0)
 
 instance (Integral a, Arbitrary a) => Arbitrary (Quantity n a) where
     shrink (Quantity a) = Quantity <$> shrinkIntegral a
