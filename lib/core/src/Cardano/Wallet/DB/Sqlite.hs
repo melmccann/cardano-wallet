@@ -1371,6 +1371,7 @@ mkTxMetaEntity wid txid meta derived = TxMeta
     , txMetaAmount = getQuantity (derived ^. #amount)
     , txMetaSlotExpires = derived ^. #expiry
     , txMetaData = meta
+    , txMetaDeposit = getQuantity <$> (derived ^. #deposit)
     }
 
 -- note: TxIn records must already be sorted by order
@@ -1435,6 +1436,7 @@ txHistoryFromEntity ti tip metas ins outs ws =
         , W.blockHeight = Quantity (txMetaBlockHeight m)
         , W.amount = Quantity (txMetaAmount m)
         , W.expiry = txMetaSlotExpires m
+        , W.deposit = Quantity <$> (txMetaDeposit m)
         }
 
 mkProtocolParametersEntity

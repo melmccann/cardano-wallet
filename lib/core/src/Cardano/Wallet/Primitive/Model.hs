@@ -388,6 +388,7 @@ prefilterBlock b u0 = runState $ do
         , blockHeight = b ^. #header . #blockHeight
         , amount = Quantity amt
         , expiry = Nothing
+        , deposit = Nothing
         }
     applyTx
         :: (IsOurs s Address, IsOurs s RewardAccount)
