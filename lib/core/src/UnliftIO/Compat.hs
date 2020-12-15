@@ -11,6 +11,7 @@ module UnliftIO.Compat
      ( coerceHandler
      , coerceHandlers
      , mkRetryHandler
+     , handleIf
      ) where
 
 import Prelude
@@ -39,3 +40,12 @@ mkRetryHandler
     => (e -> m Bool)
     -> [a -> Exceptions.Handler m Bool]
 mkRetryHandler shouldRetry = [const $ Exceptions.Handler shouldRetry]
+
+-- | A 'MonadUnliftIO' version of 'Control.Monad.Catch.handleIf'.
+handleIf
+    :: (MonadUnliftIO m, Exception e)
+    => (e -> Bool)
+    -> (e -> m a)
+    -> m a
+    -> m a
+handleIf f h = handle (\e -> if f e then h e else throwIO e)

@@ -106,7 +106,7 @@ import GHC.Generics
 import System.Log.FastLogger
     ( fromLogStr )
 import UnliftIO.Compat
-    ( mkRetryHandler )
+    ( handleIf, mkRetryHandler )
 import UnliftIO.Exception
     ( Exception, bracket_, handle, handleJust, throwIO, tryJust )
 
@@ -203,14 +203,6 @@ destroyDBLayer (SqliteContext {getSqlBackend, trace, dbFile}) = do
     isBusy (SqliteException name _ _) = pure (name == Sqlite.ErrorBusy)
     pol = limitRetriesByCumulativeDelay (60000*ms) $ constantDelay (25*ms)
     ms = 1000 -- microseconds in a millisecond
-
-handleIf
-    :: (MonadUnliftIO m, Exception e)
-    => (e -> Bool)
-    -> (e -> m a)
-    -> m a
-    -> m a
-handleIf f h = handle (\e -> if f e then h e else throwIO e)
 
 {-------------------------------------------------------------------------------
                            Internal / Database Setup
