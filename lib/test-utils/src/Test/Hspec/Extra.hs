@@ -21,6 +21,8 @@ import Prelude
 
 import Control.Concurrent
     ( threadDelay )
+import Control.Concurrent.Async
+    ( AsyncCancelled )
 import Control.Concurrent.MVar
     ( MVar, newEmptyMVar, putMVar, takeMVar )
 import System.Environment
@@ -128,6 +130,7 @@ itWithCustomTimeout
     -> SpecWith ctx
 itWithCustomTimeout sec title action = specify title $ \ctx -> timeout sec $ do
     action ctx
+        `catch` (\(_ :: AsyncCancelled) -> return ())
         `catch` (\(e :: SomeException)  -> action ctx
         `catch` (\(_ :: SomeException)  -> throwIO e))
   where
